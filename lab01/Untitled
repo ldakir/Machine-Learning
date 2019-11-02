@@ -1,0 +1,67 @@
+def MakeSubTree(self,D,F,max_depth):
+      if self.stop(D,F,max_depth): #Data is unambiguous or F is empty or reached depth
+          class_label = 0
+          for x in D.data:
+              class_label += x.label
+          if class_label > 0:
+              self.root.children.append('1')
+              #self.root.children.append('Leaf')
+          else:
+              self.root.children.append('-1')
+              #self.root.children.append('Leaf')
+
+      else:
+          current_depth = 0
+          if max_depth != None:
+              max_depth -=1
+          S = self.FindBestFeature(D,F)
+          outcomes = F[S]
+          F.pop(S)
+          if self.root == None:
+              self.root = Node()
+              self.root.value = S
+              self.root.counts.append('[' + str(D.counts(-1,D.data))+', ' +str(D.counts(1,D.data)) +']')
+          else:
+              child = Node()
+              child.root = S
+              self.root.children.append(child.root)
+
+          for i in range(len(outcomes)):
+
+              self.root.children.append(outcomes[i])
+              Dk = Partition(D.find_subdata(S,outcomes[i]),F)
+              self.root.counts.append('[' + str(Dk.counts(-1,Dk.data))+', ' +str(Dk.counts(1,Dk.data)) +']')
+              current_depth +=1
+
+              self.MakeSubTree(Dk, F,max_depth)
+
+      return self.root
+
+
+
+
+      """current_depth = 0
+            if max_depth != None:
+                max_depth -=1
+            S = self.FindBestFeature(D,F)
+            outcomes = F[S]
+            F.pop(S)
+            current_depth += 1
+            #print(current_depth)
+            if self.root == None:
+                self.root = Node()
+                self.root.value = S
+                self.root.counts.append('[' + str(D.counts(-1,D.data))+', ' +str(D.counts(1,D.data)) +']')
+            else:
+                self.root.children.append(S)
+            for i in range(len(outcomes)):
+                child = Node()
+                child.value =  outcomes[i]
+
+
+                self.root.children.append(child.value)
+                Dk = Partition(D.find_subdata(S,outcomes[i]),F)
+                self.root.counts.append('[' + str(Dk.counts(-1,Dk.data))+', ' +str(Dk.counts(1,Dk.data)) +']')
+                current_depth +=1
+
+                self.root.children.append(self.MakeSubTree(Dk, F,max_depth))"""
